@@ -28,6 +28,12 @@
 			this.Obj.bind(this.TouchMove,SwipeMove);
 			this.Obj.bind(this.TouchEnd,SwipeEnd);
 
+			if (Touch){
+				this.Obj.bind('touchcancel',SwipeCancel);
+			} else {
+				this.Obj.bind('mouseleave',SwipeCancel);
+			}
+
 		}
 	};
 
@@ -72,7 +78,7 @@
 	}
 	function SwipeMove(e) {
 		if (Moving) {
-			var e = e.originalEvent;
+			e = e.originalEvent;
 
 			var Finger = e.changedTouches ? e.changedTouches[0] : e;
 			
@@ -89,16 +95,12 @@
 		}
 	}
 	function SwipeEnd(e) {
-		e = e.originalEvent;	
+		e = e.originalEvent;
 		if (Moving) {
-			var Finger = e.changedTouches ? e.changedTouches[0] : e;
-			
-			//SwipeLocation(Finger);
-
 			if (Direction && Distance !== 0) {
 				Obj.trigger('swipe'+Direction,[Distance]);
 			} else if (Distance > 20) {
-				e.preventDefault;
+				e.preventDefault();
 			}
 			Obj.trigger('swipe',[Distance,Direction,true]);
 			Obj.trigger('swipeend',[Distance,Direction]);
@@ -108,6 +110,9 @@
 			Moving = false;
 			Direction = false;
 		}
+	}
+	function SwipeCancel(e) {
+		SwipeEnd(e);
 	}
 	function SwipeLocation(Touch) {
 
